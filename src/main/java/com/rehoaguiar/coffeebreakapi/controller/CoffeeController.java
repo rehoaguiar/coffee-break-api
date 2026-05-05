@@ -1,7 +1,12 @@
 package com.rehoaguiar.coffeebreakapi.controller;
 
+import com.rehoaguiar.coffeebreakapi.dto.CoffeeRequest;
+import com.rehoaguiar.coffeebreakapi.dto.CoffeeResponse;
 import com.rehoaguiar.coffeebreakapi.entity.Coffee;
 import com.rehoaguiar.coffeebreakapi.service.CoffeeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,36 +18,45 @@ import java.util.List;
 @RestController
 @RequestMapping("/coffees")
 @RequiredArgsConstructor
+@Tag(name = "Cafes", description = "Endpoints para cadastrar, listar, atualizar e remover cafes.")
 public class CoffeeController {
     private final CoffeeService coffeeService;
 
+    @Operation(summary = "Cadastrar cafe", description = "Cria um novo cafe.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping
-    public ResponseEntity<Coffee> create(@Valid @RequestBody Coffee coffee) {
-        Coffee createdCoffee = coffeeService.create(coffee);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdCoffee);
+    public ResponseEntity<CoffeeResponse> create(@Valid @RequestBody CoffeeRequest request) {
+        Coffee createdCoffee = coffeeService.create(request.toEntity());
+        return ResponseEntity.status(HttpStatus.CREATED).body(CoffeeResponse.fromEntity(createdCoffee));
     }
 
+    @Operation(summary = "Listar cafes", description = "Retorna todos os cafes cadastrados.")
     @GetMapping
-    public ResponseEntity<List<Coffee>> findAll() {
+    public ResponseEntity<List<CoffeeResponse>> findAll() {
         List<Coffee> coffees = coffeeService.findAll();
-        return ResponseEntity.ok(coffees);
+        List<CoffeeResponse> response = coffees.stream()
+                .map(CoffeeResponse::fromEntity)
+                .toList();
+        return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Buscar cafe por id", description = "Retorna um cafe pelo id informado.")
     @GetMapping("/{id}")
-    public ResponseEntity<Coffee> findById(@PathVariable Long id) {
+    public ResponseEntity<CoffeeResponse> findById(@PathVariable Long id) {
         Coffee coffee = coffeeService.findById(id);
-        return ResponseEntity.ok(coffee);
+        return ResponseEntity.ok(CoffeeResponse.fromEntity(coffee));
     }
 
+    @Operation(summary = "Atualizar cafe", description = "Atualiza um cafe existente.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping("/{id}")
-    public ResponseEntity<Coffee> update(
+    public ResponseEntity<CoffeeResponse> update(
             @PathVariable Long id,
-            @Valid @RequestBody Coffee coffee
+            @Valid @RequestBody CoffeeRequest request
     ) {
-        Coffee updatedCoffee = coffeeService.update(id, coffee);
-        return ResponseEntity.ok(updatedCoffee);
+        Coffee updatedCoffee = coffeeService.update(id, request.toEntity());
+        return ResponseEntity.ok(CoffeeResponse.fromEntity(updatedCoffee));
     }
 
+    @Operation(summary = "Remover cafe", description = "Remove um cafe pelo id informado.", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         coffeeService.delete(id);
