@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,7 +35,7 @@ class CoffeeIntegrationTests {
     @Test
     void createCoffeeShouldReturnConflictWhenNameAlreadyExists() throws Exception {
         String token = registerAndGetToken();
-        Map<String, Object> payload = coffeePayload("Cafe Duplicado " + UUID.randomUUID());
+        Map<String, Object> payload = coffeePayload("Café Duplicado " + UUID.randomUUID());
 
         mockMvc.perform(post("/coffees")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -53,8 +54,8 @@ class CoffeeIntegrationTests {
     @Test
     void updateCoffeeShouldReturnConflictWhenNameAlreadyExistsInAnotherCoffee() throws Exception {
         String token = registerAndGetToken();
-        Map<String, Object> firstCoffee = coffeePayload("Cafe Original " + UUID.randomUUID());
-        Map<String, Object> secondCoffee = coffeePayload("Cafe Para Atualizar " + UUID.randomUUID());
+        Map<String, Object> firstCoffee = coffeePayload("Café Original " + UUID.randomUUID());
+        Map<String, Object> secondCoffee = coffeePayload("Café Para Atualizar " + UUID.randomUUID());
 
         mockMvc.perform(post("/coffees")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -86,7 +87,7 @@ class CoffeeIntegrationTests {
     @Test
     void createCoffeeShouldReturnBadRequestWhenEnumIsInvalid() throws Exception {
         String token = registerAndGetToken();
-        Map<String, Object> payload = coffeePayload("Cafe Enum Invalido " + UUID.randomUUID());
+        Map<String, Object> payload = coffeePayload("Café Enum Inválido " + UUID.randomUUID());
         payload.put("roastLevel", "TORRA_INVALIDA");
 
         mockMvc.perform(post("/coffees")
@@ -94,7 +95,35 @@ class CoffeeIntegrationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(payload)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Formato da requisicao invalido"));
+                .andExpect(jsonPath("$.message").value("Formato da requisição inválido"));
+    }
+
+    @Test
+    void findAllShouldFilterCoffeesByType() throws Exception {
+        String token = registerAndGetToken();
+        Map<String, Object> capsuleCoffee = coffeePayload("Café Cápsula " + UUID.randomUUID());
+        capsuleCoffee.put("type", "CAPSULA");
+        Map<String, Object> beansCoffee = coffeePayload("Café Grãos " + UUID.randomUUID());
+        beansCoffee.put("type", "GRAOS");
+
+        mockMvc.perform(post("/coffees")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(capsuleCoffee)))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/coffees")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beansCoffee)))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(get("/coffees")
+                        .param("type", "capsula"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value(capsuleCoffee.get("name")))
+                .andExpect(jsonPath("$[0].type").value("CAPSULA"))
+                .andExpect(jsonPath("$[1]").doesNotExist());
     }
 
     private String registerAndGetToken() throws Exception {
@@ -133,7 +162,7 @@ class CoffeeIntegrationTests {
         payload.put("roastLevel", "MEDIA");
         payload.put("flavorNotes", "Chocolate e caramelo");
         payload.put("rating", "QUATRO_ESTRELAS");
-        payload.put("description", "Cafe criado em teste de integracao");
+        payload.put("description", "Café criado em teste de integração");
         return payload;
     }
 }

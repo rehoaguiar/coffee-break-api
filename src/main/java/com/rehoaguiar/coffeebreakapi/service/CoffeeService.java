@@ -27,6 +27,10 @@ public class CoffeeService {
         return coffeeRepository.findAll();
     }
 
+    public List<Coffee> findByType(String type) {
+        return coffeeRepository.findByTypeIgnoreCase(type);
+    }
+
     public Coffee findById(Long id) {
         return coffeeRepository.findById(id)
                 .orElseThrow(() -> new CoffeeNotFoundException("Café não encontrado com o id: " + id));

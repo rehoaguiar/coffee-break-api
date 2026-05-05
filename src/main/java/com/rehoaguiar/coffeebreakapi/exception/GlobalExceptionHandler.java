@@ -92,7 +92,7 @@ public class GlobalExceptionHandler {
     ) {
         ErrorResponse errorResponse = buildErrorResponse(
                 HttpStatus.BAD_REQUEST,
-                "Formato da requisicao invalido",
+                "Formato da requisição inválido",
                 request.getRequestURI()
         );
 
@@ -120,7 +120,7 @@ public class GlobalExceptionHandler {
     ) {
         ErrorResponse errorResponse = buildErrorResponse(
                 HttpStatus.CONFLICT,
-                "Conflito de dados na requisicao",
+                "Conflito de dados na requisição",
                 request.getRequestURI()
         );
 

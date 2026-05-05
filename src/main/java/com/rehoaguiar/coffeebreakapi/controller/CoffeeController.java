@@ -29,10 +29,12 @@ public class CoffeeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(CoffeeResponse.fromEntity(createdCoffee));
     }
 
-    @Operation(summary = "Listar cafés", description = "Retorna todos os cafés cadastrados.")
+    @Operation(summary = "Listar cafés", description = "Retorna todos os cafés cadastrados ou filtra por tipo.")
     @GetMapping
-    public ResponseEntity<List<CoffeeResponse>> findAll() {
-        List<Coffee> coffees = coffeeService.findAll();
+    public ResponseEntity<List<CoffeeResponse>> findAll(@RequestParam(required = false) String type) {
+        List<Coffee> coffees = type == null || type.isBlank()
+                ? coffeeService.findAll()
+                : coffeeService.findByType(type);
         List<CoffeeResponse> response = coffees.stream()
                 .map(CoffeeResponse::fromEntity)
                 .toList();

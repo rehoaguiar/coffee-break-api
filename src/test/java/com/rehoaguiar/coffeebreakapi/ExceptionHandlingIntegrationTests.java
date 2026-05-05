@@ -23,7 +23,7 @@ class ExceptionHandlingIntegrationTests {
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(jsonPath("$.status").value(405))
                 .andExpect(jsonPath("$.error").value("Method Not Allowed"))
-                .andExpect(jsonPath("$.message").value("Metodo HTTP nao permitido para este endpoint"))
+                .andExpect(jsonPath("$.message").value("Método HTTP não permitido para este endpoint"))
                 .andExpect(jsonPath("$.path").value("/auth/register"));
     }
 }
