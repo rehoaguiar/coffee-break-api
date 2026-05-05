@@ -37,7 +37,7 @@ class AuthIntegrationTests {
         register.setEmail(email);
         register.setPassword("123456");
 
-        mockMvc.perform(post("/auth/cadastrar")
+        mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(register)))
                 .andExpect(status().isCreated())
@@ -57,17 +57,63 @@ class AuthIntegrationTests {
     @Test
     void createCoffeeShouldRequireJwt() throws Exception {
         Map<String, Object> payload = new HashMap<>();
-        payload.put("name", "Cafe Teste");
-        payload.put("type", "ESPRESSO");
-        payload.put("brand", "Marca X");
+        payload.put("name", "Café de Caramelo (Teste)");
+        payload.put("type", "SABORIZADO");
+        payload.put("brand", "NESPRESSO");
         payload.put("roastLevel", "MEDIA");
-        payload.put("flavorNotes", "Chocolate");
+        payload.put("flavorNotes", "Caramelo e cereais");
         payload.put("rating", "QUATRO_ESTRELAS");
-        payload.put("description", "Teste");
+        payload.put("description", "Café aromático de caramelo");
 
         mockMvc.perform(post("/coffees")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(payload)))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void loginShouldReturnUnauthorizedWhenPasswordIsInvalid() throws Exception {
+        String email = "user-" + UUID.randomUUID() + "@mail.com";
+
+        RegisterRequest register = new RegisterRequest();
+        register.setName("Test User");
+        register.setEmail(email);
+        register.setPassword("123456");
+
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(register)))
+                .andExpect(status().isCreated());
+
+        LoginRequest login = new LoginRequest();
+        login.setEmail(email);
+        login.setPassword("senha-errada");
+
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(login)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("E-mail ou senha inválidos"));
+    }
+
+    @Test
+    void registerShouldReturnConflictWhenEmailAlreadyExists() throws Exception {
+        String email = "user-" + UUID.randomUUID() + "@mail.com";
+
+        RegisterRequest register = new RegisterRequest();
+        register.setName("Test User");
+        register.setEmail(email);
+        register.setPassword("123456");
+
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(register)))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(register)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("E-mail já cadastrado"));
     }
 }

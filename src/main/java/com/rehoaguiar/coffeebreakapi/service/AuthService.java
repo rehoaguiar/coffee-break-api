@@ -1,9 +1,11 @@
 package com.rehoaguiar.coffeebreakapi.service;
 
-import com.rehoaguiar.coffeebreakapi.dto.AuthResponse;
 import com.rehoaguiar.coffeebreakapi.dto.LoginRequest;
 import com.rehoaguiar.coffeebreakapi.dto.RegisterRequest;
+import com.rehoaguiar.coffeebreakapi.dto.TokenResponse;
 import com.rehoaguiar.coffeebreakapi.entity.User;
+import com.rehoaguiar.coffeebreakapi.exception.EmailAlreadyRegisteredException;
+import com.rehoaguiar.coffeebreakapi.exception.InvalidCredentialsException;
 import com.rehoaguiar.coffeebreakapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +19,11 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public AuthResponse register(RegisterRequest request) {
+    public TokenResponse register(RegisterRequest request) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new EmailAlreadyRegisteredException("E-mail já cadastrado");
+        }
+
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
@@ -28,12 +34,12 @@ public class AuthService {
 
         String token = jwtService.generateToken(user.getEmail());
 
-        return new AuthResponse(token);
+        return new TokenResponse(token);
     }
 
-    public AuthResponse login(LoginRequest request) {
+    public TokenResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("E-mail ou senha inválidos"));
+                .orElseThrow(() -> new InvalidCredentialsException("E-mail ou senha inválidos"));
 
         boolean passwordMatches = passwordEncoder.matches(
                 request.getPassword(),
@@ -41,11 +47,11 @@ public class AuthService {
         );
 
         if (!passwordMatches) {
-            throw new RuntimeException("E-mail ou senha inválidos");
+            throw new InvalidCredentialsException("E-mail ou senha inválidos");
         }
 
         String token = jwtService.generateToken(user.getEmail());
 
-        return new AuthResponse(token);
+        return new TokenResponse(token);
     }
 }
