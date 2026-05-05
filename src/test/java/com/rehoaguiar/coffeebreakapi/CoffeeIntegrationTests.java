@@ -47,7 +47,7 @@ class CoffeeIntegrationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(payload)))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message").value("Ja existe um cafe cadastrado com esse nome"));
+                .andExpect(jsonPath("$.message").value("Já existe um café cadastrado com esse nome"));
     }
 
     @Test
@@ -80,7 +80,7 @@ class CoffeeIntegrationTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(secondCoffee)))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message").value("Ja existe um cafe cadastrado com esse nome"));
+                .andExpect(jsonPath("$.message").value("Já existe um café cadastrado com esse nome"));
     }
 
     @Test
