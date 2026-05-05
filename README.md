@@ -1,6 +1,6 @@
 # coffee-break-api
 
-É uma API criada inicialmente como um projeto universitário, utilizada para cadastrar e avaliar os cafezinhos consumidos na pausa do trabalho.
+É uma API criada inicialmente como um projeto universitário, utilizada para cadastrar e avaliar os cafézinhos consumidos na pausa do trabalho.
 
 ## Objetivo
 
@@ -25,7 +25,10 @@ Propriedades relevantes:
 - `app.jwt.secret`: chave usada para assinar JWT;
 - `app.jwt.expiration-ms`: tempo de expiração do token;
 - `spring.datasource.url`: banco H2 em memória (`jdbc:h2:mem:coffeebreakdb`);
+- `spring.jpa.hibernate.ddl-auto=update`: permite que o Hibernate crie/atualize as tabelas localmente;
 - `spring.h2.console.enabled=true`: habilita o console H2.
+
+Atualmente, a estrutura do banco local é criada pelo Hibernate.
 
 ## Executar Localmente
 
