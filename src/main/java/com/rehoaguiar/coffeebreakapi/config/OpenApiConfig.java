@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
         info = @Info(
                 title = "Coffee Break API",
                 version = "v1",
-                description = "API REST para autenticar usuarios e gerenciar cafes."
+                description = "API REST para autenticar usuários e gerenciar cafés."
         )
 )
 @SecurityScheme(
