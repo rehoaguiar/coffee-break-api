@@ -1,8 +1,8 @@
 package com.rehoaguiar.coffeebreakapi.service;
 
-import com.rehoaguiar.coffeebreakapi.dto.AuthResponse;
 import com.rehoaguiar.coffeebreakapi.dto.LoginRequest;
 import com.rehoaguiar.coffeebreakapi.dto.RegisterRequest;
+import com.rehoaguiar.coffeebreakapi.dto.TokenResponse;
 import com.rehoaguiar.coffeebreakapi.entity.User;
 import com.rehoaguiar.coffeebreakapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AutenticacaoService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public AuthResponse register(RegisterRequest request) {
+    public TokenResponse register(RegisterRequest request) {
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
@@ -28,10 +28,10 @@ public class AuthService {
 
         String token = jwtService.generateToken(user.getEmail());
 
-        return new AuthResponse(token);
+        return new TokenResponse(token);
     }
 
-    public AuthResponse login(LoginRequest request) {
+    public TokenResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("E-mail ou senha inválidos"));
 
@@ -46,6 +46,6 @@ public class AuthService {
 
         String token = jwtService.generateToken(user.getEmail());
 
-        return new AuthResponse(token);
+        return new TokenResponse(token);
     }
 }

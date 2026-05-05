@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class AuthIntegrationTests {
+class AutenticacaoIntegrationTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -37,7 +37,7 @@ class AuthIntegrationTests {
         register.setEmail(email);
         register.setPassword("123456");
 
-        mockMvc.perform(post("/auth/cadastrar")
+        mockMvc.perform(post("/autenticacao/cadastrar")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(register)))
                 .andExpect(status().isCreated())
@@ -47,7 +47,7 @@ class AuthIntegrationTests {
         login.setEmail(email);
         login.setPassword("123456");
 
-        mockMvc.perform(post("/auth/login")
+        mockMvc.perform(post("/autenticacao/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(login)))
                 .andExpect(status().isOk())
@@ -57,13 +57,13 @@ class AuthIntegrationTests {
     @Test
     void createCoffeeShouldRequireJwt() throws Exception {
         Map<String, Object> payload = new HashMap<>();
-        payload.put("name", "Cafe Teste");
-        payload.put("type", "ESPRESSO");
-        payload.put("brand", "Marca X");
+        payload.put("name", "Café de Caramelo (Teste)");
+        payload.put("type", "SABORIZADO");
+        payload.put("brand", "NESPRESSO");
         payload.put("roastLevel", "MEDIA");
-        payload.put("flavorNotes", "Chocolate");
+        payload.put("flavorNotes", "Caramelo e cereais");
         payload.put("rating", "QUATRO_ESTRELAS");
-        payload.put("description", "Teste");
+        payload.put("description", "Café aromático de caramelo");
 
         mockMvc.perform(post("/coffees")
                         .contentType(MediaType.APPLICATION_JSON)
