@@ -3,7 +3,7 @@ package com.rehoaguiar.coffeebreakapi.controller;
 import com.rehoaguiar.coffeebreakapi.dto.LoginRequest;
 import com.rehoaguiar.coffeebreakapi.dto.RegisterRequest;
 import com.rehoaguiar.coffeebreakapi.dto.TokenResponse;
-import com.rehoaguiar.coffeebreakapi.service.AutenticacaoService;
+import com.rehoaguiar.coffeebreakapi.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,21 +11,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/autenticacao")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
-public class AutenticacaoController {
+public class AuthController {
 
-    private final AutenticacaoService autenticacaoService;
+    private final AuthService authService;
 
-    @PostMapping("/cadastrar")
-    public ResponseEntity<TokenResponse> cadastrar(@Valid @RequestBody RegisterRequest request) {
-        TokenResponse response = autenticacaoService.register(request);
+    @PostMapping("/register")
+    public ResponseEntity<TokenResponse> register(@Valid @RequestBody RegisterRequest request) {
+        TokenResponse response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
-        TokenResponse response = autenticacaoService.login(request);
+        TokenResponse response = authService.login(request);
         return ResponseEntity.ok(response);
     }
 }

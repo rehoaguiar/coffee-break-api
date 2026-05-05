@@ -28,7 +28,7 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedEntryPoint()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/autenticacao/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/coffees/**").permitAll()
                         .anyRequest().authenticated()
                 )
