@@ -1,0 +1,57 @@
+### Build ###
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### Logs ###
+*.log
+logs/
+
+### Runtime/local files ###
+*.pid
+*.seed
+*.out
+*.err
+*.h2.db
+*.mv.db
+*.trace.db
+/.mvn/timing.properties
+
+### OS ###
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Local env ###
+.env
+.env.*
+!.env.example
