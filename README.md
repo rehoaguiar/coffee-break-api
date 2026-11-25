@@ -44,7 +44,9 @@ Windows (PowerShell):
 .\mvnw.cmd spring-boot:run
 ```
 
-API local: `http://localhost:8080`
+API local: `http://localhost:8090` (para usar outra porta, defina a variável `PORT`)
+
+O app web do Expo (`http://localhost:*`) pode chamar a API pelo navegador. Para liberar outras origens, defina `CORS_ORIGINS` com a lista separada por vírgulas.
 
 ## Endpoints Principais
 
