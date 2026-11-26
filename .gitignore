@@ -55,3 +55,6 @@ Desktop.ini
 .env
 .env.*
 !.env.example
+
+### Banco local (perfil dev) ###
+data/

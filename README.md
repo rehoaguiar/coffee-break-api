@@ -15,20 +15,27 @@ O projeto oferece uma API REST para:
 - Maven 3.9+
 - Spring Security + JWT
 - Spring Data JPA
-- H2 Database em memória para ambiente local
+- H2 Database para desenvolvimento e testes
+- PostgreSQL para produção
 
 ## Configuração de Ambiente
 
-As configurações atuais estão em `src/main/resources/application.properties`.
+As configurações estão em `src/main/resources/application.properties`, com um arquivo por perfil:
+
+| Perfil | Banco | Quando é usado |
+| --- | --- | --- |
+| (padrão) | H2 em memória | testes (`mvn test`); os dados somem ao parar |
+| `dev` | H2 em arquivo, em `./data/` | `mvn spring-boot:run`; contas e cafés continuam após reiniciar |
+| `prod` | PostgreSQL | `SPRING_PROFILES_ACTIVE=prod` |
+
+Para zerar o banco local, pare a API e apague a pasta `data/`.
 
 Propriedades relevantes:
-- `app.jwt.secret`: chave usada para assinar JWT;
+- `app.jwt.secret` (`APP_JWT_SECRET`): chave usada para assinar JWT. Em produção, defina sempre uma chave própria;
 - `app.jwt.expiration-ms`: tempo de expiração do token;
-- `spring.datasource.url`: banco H2 em memória (`jdbc:h2:mem:coffeebreakdb`);
-- `spring.jpa.hibernate.ddl-auto=update`: permite que o Hibernate crie/atualize as tabelas localmente;
-- `spring.h2.console.enabled=true`: habilita o console H2.
-
-Atualmente, a estrutura do banco local é criada pelo Hibernate.
+- `spring.datasource.url` (`DB_URL`), `DB_USERNAME`, `DB_PASSWORD`: conexão com o banco. No perfil `prod` são obrigatórias, por exemplo `DB_URL=jdbc:postgresql://localhost:5432/coffeebreak`;
+- `spring.jpa.hibernate.ddl-auto=update`: o Hibernate cria/atualiza as tabelas (em produção pode ser trocado por `DDL_AUTO`);
+- `spring.h2.console.enabled`: console H2 ligado no dev e desligado no `prod`.
 
 ## Executar Localmente
 
@@ -43,6 +50,8 @@ Windows (PowerShell):
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
+
+O `spring-boot:run` já usa o perfil `dev`. Ao rodar pela IDE, ative o perfil `dev` na configuração de execução.
 
 API local: `http://localhost:8090` (para usar outra porta, defina a variável `PORT`)
 
