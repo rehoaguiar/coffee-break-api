@@ -119,6 +119,7 @@ class CoffeeIntegrationTests {
                 .andExpect(status().isCreated());
 
         mockMvc.perform(get("/coffees")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .param("type", "capsula"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value(capsuleCoffee.get("name")))

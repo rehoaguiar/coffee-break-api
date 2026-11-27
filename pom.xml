@@ -75,6 +75,11 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
@@ -97,6 +102,10 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<!-- mvn spring-boot:run usa o perfil dev (H2 em arquivo) -->
+					<profiles>
+						<profile>dev</profile>
+					</profiles>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>

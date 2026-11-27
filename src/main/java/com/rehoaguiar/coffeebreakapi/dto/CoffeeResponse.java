@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 public class CoffeeResponse {
     private Long id;
+    private String key;
     private String name;
     private String type;
     private String brand;
@@ -19,12 +20,15 @@ public class CoffeeResponse {
     private String flavorNotes;
     private Rating rating;
     private String description;
+    private String itemId;
+    private String color;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public static CoffeeResponse fromEntity(Coffee coffee) {
         return CoffeeResponse.builder()
                 .id(coffee.getId())
+                .key(coffee.getClientKey())
                 .name(coffee.getName())
                 .type(coffee.getType())
                 .brand(coffee.getBrand())
@@ -32,6 +36,8 @@ public class CoffeeResponse {
                 .flavorNotes(coffee.getFlavorNotes())
                 .rating(coffee.getRating())
                 .description(coffee.getDescription())
+                .itemId(coffee.getItemId())
+                .color(coffee.getColor())
                 .createdAt(coffee.getCreatedAt())
                 .updatedAt(coffee.getUpdatedAt())
                 .build();
