@@ -18,50 +18,54 @@ import java.util.List;
 @RestController
 @RequestMapping("/coffees")
 @RequiredArgsConstructor
-@Tag(name = "Cafés", description = "Endpoints para cadastrar, listar, atualizar e remover cafés.")
+@SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Cafés", description = "Avaliações do caderninho da conta logada.")
 public class CoffeeController {
     private final CoffeeService coffeeService;
 
-    @Operation(summary = "Cadastrar café", description = "Cria um novo café.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Cadastrar avaliação", description = "Cria uma avaliação na conta logada.")
     @PostMapping
     public ResponseEntity<CoffeeResponse> create(@Valid @RequestBody CoffeeRequest request) {
-        Coffee createdCoffee = coffeeService.create(request.toEntity());
-        return ResponseEntity.status(HttpStatus.CREATED).body(CoffeeResponse.fromEntity(createdCoffee));
+        Coffee created = coffeeService.create(request.toEntity());
+        return ResponseEntity.status(HttpStatus.CREATED).body(CoffeeResponse.fromEntity(created));
     }
 
-    @Operation(summary = "Listar cafés", description = "Retorna todos os cafés cadastrados ou filtra por tipo.")
+    @Operation(summary = "Listar avaliações", description = "Retorna as avaliações da conta logada, com filtro opcional por tipo.")
     @GetMapping
     public ResponseEntity<List<CoffeeResponse>> findAll(@RequestParam(required = false) String type) {
-        List<Coffee> coffees = type == null || type.isBlank()
-                ? coffeeService.findAll()
-                : coffeeService.findByType(type);
-        List<CoffeeResponse> response = coffees.stream()
-                .map(CoffeeResponse::fromEntity)
-                .toList();
-        return ResponseEntity.ok(response);
+        List<Coffee> coffees = type == null || type.isBlank() ? coffeeService.findAll() : coffeeService.findByType(type);
+        return ResponseEntity.ok(coffees.stream().map(CoffeeResponse::fromEntity).toList());
     }
 
-    @Operation(summary = "Buscar café por id", description = "Retorna um café pelo id informado.")
+    @Operation(summary = "Buscar avaliação por id")
     @GetMapping("/{id}")
     public ResponseEntity<CoffeeResponse> findById(@PathVariable Long id) {
-        Coffee coffee = coffeeService.findById(id);
-        return ResponseEntity.ok(CoffeeResponse.fromEntity(coffee));
+        return ResponseEntity.ok(CoffeeResponse.fromEntity(coffeeService.findById(id)));
     }
 
-    @Operation(summary = "Atualizar café", description = "Atualiza um café existente.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Atualizar avaliação")
     @PutMapping("/{id}")
-    public ResponseEntity<CoffeeResponse> update(
-            @PathVariable Long id,
-            @Valid @RequestBody CoffeeRequest request
-    ) {
-        Coffee updatedCoffee = coffeeService.update(id, request.toEntity());
-        return ResponseEntity.ok(CoffeeResponse.fromEntity(updatedCoffee));
+    public ResponseEntity<CoffeeResponse> update(@PathVariable Long id, @Valid @RequestBody CoffeeRequest request) {
+        return ResponseEntity.ok(CoffeeResponse.fromEntity(coffeeService.update(id, request.toEntity())));
     }
 
-    @Operation(summary = "Remover café", description = "Remove um café pelo id informado.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Criar ou atualizar pela chave do app", description = "Idempotente: usado pelo app para salvar e sincronizar.")
+    @PutMapping("/by-key/{key}")
+    public ResponseEntity<CoffeeResponse> upsertByKey(@PathVariable String key, @Valid @RequestBody CoffeeRequest request) {
+        return ResponseEntity.ok(CoffeeResponse.fromEntity(coffeeService.upsertByKey(key, request.toEntity())));
+    }
+
+    @Operation(summary = "Remover avaliação")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         coffeeService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Remover avaliação pela chave do app")
+    @DeleteMapping("/by-key/{key}")
+    public ResponseEntity<Void> deleteByKey(@PathVariable String key) {
+        coffeeService.deleteByKey(key);
         return ResponseEntity.noContent().build();
     }
 }
