@@ -54,7 +54,7 @@ class MeIntegrationTests {
     void entriesAreIdempotentAndPrivatePerAccount() throws Exception {
         String ana = register("Ana");
         String bia = register("Bia");
-        Map<String, Object> cup = Map.of("ts", 1_700_000_000_000L, "name", "Volluto", "mg", 65, "color", "#C8A27A", "itemId", "volluto");
+        Map<String, Object> cup = Map.of("ts", 1_700_000_000_000L, "name", "Baggio Bourbon", "mg", 135, "ml", 250, "grams", 15, "itemId", "baggio-bourbon-grao");
 
         for (int i = 0; i < 2; i++) {
             mockMvc.perform(put("/me/entries/abc123").header(HttpHeaders.AUTHORIZATION, bearer(ana))
@@ -65,7 +65,9 @@ class MeIntegrationTests {
 
         mockMvc.perform(get("/me/entries").header(HttpHeaders.AUTHORIZATION, bearer(ana)))
                 .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].mg").value(65));
+                .andExpect(jsonPath("$[0].mg").value(135))
+                .andExpect(jsonPath("$[0].ml").value(250))
+                .andExpect(jsonPath("$[0].grams").value(15));
         mockMvc.perform(get("/me/entries").header(HttpHeaders.AUTHORIZATION, bearer(bia)))
                 .andExpect(jsonPath("$").isEmpty());
 

@@ -85,6 +85,8 @@ public class MeService {
         e.setTs(req.ts());
         e.setName(req.name().trim());
         e.setMg(req.mg());
+        e.setMl(req.ml());
+        e.setGrams(req.grams());
         e.setColor(req.color());
         e.setItemId(req.itemId());
         e.setOwnId(req.ownId());

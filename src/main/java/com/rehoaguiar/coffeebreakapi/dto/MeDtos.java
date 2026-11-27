@@ -63,15 +63,17 @@ public final class MeDtos {
             @NotNull Long ts,
             @NotBlank @Size(max = 255) String name,
             @NotNull @Min(0) @Max(1000) Integer mg,
+            @Min(10) @Max(2000) Integer ml,
+            @Min(1) @Max(200) Integer grams,
             @Size(max = 20) String color,
             @Size(max = 120) String itemId,
             @Size(max = 64) String ownId
     ) {
     }
 
-    public record EntryResponse(String id, long ts, String name, int mg, String color, String itemId, String ownId) {
+    public record EntryResponse(String id, long ts, String name, int mg, Integer ml, Integer grams, String color, String itemId, String ownId) {
         public static EntryResponse fromEntity(CupEntry e) {
-            return new EntryResponse(e.getClientId(), e.getTs(), e.getName(), e.getMg(), e.getColor(), e.getItemId(), e.getOwnId());
+            return new EntryResponse(e.getClientId(), e.getTs(), e.getName(), e.getMg(), e.getMl(), e.getGrams(), e.getColor(), e.getItemId(), e.getOwnId());
         }
     }
 

@@ -36,6 +36,12 @@ public class CupEntry {
     @Column(nullable = false)
     private Integer mg;
 
+    /** Tamanho da xícara ou caneca em ml (pó e grão). */
+    private Integer ml;
+
+    /** Gramas de café moído usados (grão). */
+    private Integer grams;
+
     @Column(length = 20)
     private String color;
 
